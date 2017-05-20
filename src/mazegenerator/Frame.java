@@ -8,8 +8,8 @@ public final class Frame extends JFrame{
         super("Maze Generator");
         setResizable(false);
         
-        MazeGenerator mazeGenerator = new MazeGenerator();
-        add(mazeGenerator);
+        PaintMaze paintMaze = new PaintMaze();
+        add(paintMaze);
         pack();
         
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

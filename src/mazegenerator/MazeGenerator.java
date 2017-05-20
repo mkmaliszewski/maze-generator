@@ -1,14 +1,11 @@
 package mazegenerator;
 
-import java.awt.Color;
-import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.Stack;
-import javax.swing.JPanel;
 
-public class MazeGenerator extends JPanel{
+public class MazeGenerator {
     private int rows, columns;
     private int[][] maze;
     private boolean[][] visited;
@@ -17,12 +14,7 @@ public class MazeGenerator extends JPanel{
         rows = 19;
         columns = 29;
         maze = new int[rows][columns];
-        visited = new boolean[rows][columns];
-        int width = columns  * 30;
-        int height = rows * 30;
-        setPreferredSize(new Dimension(width, height));
-        setBackground(Color.GRAY);
-        
+        visited = new boolean[rows][columns];        
         initializeMaze();
         generateMaze();
     }
@@ -92,21 +84,33 @@ public class MazeGenerator extends JPanel{
             
             switch (wallToRemove) {
                 case "right":
-                    maze[x + 1][y] = 2;
+                    maze[x + 1][y] = 1;
                     return new int[] {x + 2, y};
                 case "left":
-                    maze[x - 1][y] = 2;
+                    maze[x - 1][y] = 1;
                     return new int[] {x - 2, y};
                 case "up":
-                    maze[x][y - 1] = 2;
+                    maze[x][y - 1] = 1;
                     return new int[] {x, y - 2};
                 case "down":
-                    maze[x][y + 1] = 2;
+                    maze[x][y + 1] = 1;
                     return new int[] {x, y + 2};
                 default:
                     break;
             }
         }
         return new int[] {-1, -1};
+    }
+    
+    public int[][] getMaze(){
+        return maze;
+    }
+    
+    public int getRows(){
+        return rows;
+    }
+    
+    public int getColumns(){
+        return columns;
     }
 }
