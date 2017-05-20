@@ -6,32 +6,31 @@ import java.util.Random;
 import java.util.Stack;
 
 public class MazeGenerator {
-    private int rows, columns;
+    private final int size;
     private int[][] maze;
     private boolean[][] visited;
     
     public MazeGenerator(){
-        rows = 19;
-        columns = 29;
-        maze = new int[rows][columns];
-        visited = new boolean[rows][columns];        
+        size = 71;
+        maze = new int[size][size];
+        visited = new boolean[size][size];        
         initializeMaze();
         generateMaze();
     }
     
     private void initializeMaze(){
-        for (int i = 2; i < rows - 2; i++){
-            for (int j = 2; j < columns - 2; j++){
+        for (int i = 2; i < size - 2; i++){
+            for (int j = 2; j < size - 2; j++){
                 if (i % 2 == 0 && j % 2 == 0){
                     maze[i][j] = 1;
                 }
             }
         }
         
-        for (int i = 0; i < rows; i++){
-            for (int j = 0; j < columns; j++){
-                if (i == 0 || i == 1 || i == rows - 1 || i == rows - 2||
-                        j == 0 || j == 1 || j == columns - 1 || j == columns - 2){
+        for (int i = 0; i < size; i++){
+            for (int j = 0; j < size; j++){
+                if (i == 0 || i == 1 || i == size - 1 || i == size - 2||
+                        j == 0 || j == 1 || j == size - 1 || j == size - 2){
                     visited[i][j] = true;
                 }
             }
@@ -106,11 +105,7 @@ public class MazeGenerator {
         return maze;
     }
     
-    public int getRows(){
-        return rows;
-    }
-    
-    public int getColumns(){
-        return columns;
+    public int getSize(){
+        return size;
     }
 }
