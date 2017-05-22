@@ -1,21 +1,25 @@
 package mazegenerator;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 import java.util.Random;
 import java.util.Stack;
 
-public class MazeGenerator {
+public final class MazeGenerator {
     private final int size;
-    private int[][] maze;
-    private boolean[][] visited;
+    private final int[][] maze;
+    private final boolean[][] visited;
     
     public MazeGenerator(){
-        size = 71;
+        size = 91;
         maze = new int[size][size];
         visited = new boolean[size][size];        
         initializeMaze();
         generateMaze();
+        markWayToStartPoint();
+        findTheExit();
     }
     
     private void initializeMaze(){
@@ -107,5 +111,78 @@ public class MazeGenerator {
     
     public int getSize(){
         return size;
+    }
+    
+    private void markWayToStartPoint(){
+        int startX = 2, startY = 2;
+        int finishX = size - 3, finishY = size - 3;
+        Queue<Integer> queue = new LinkedList<>();
+        queue.add(startX);
+        queue.add(startY);
+        
+        while (!queue.isEmpty()){
+            int x = queue.poll();
+            int y = queue.poll();
+            
+            if (x == finishX && y == finishY){
+                break;
+            }
+            
+            if (maze[x - 1][y] == 1){
+                maze[x - 1][y] = 'd';
+                maze[x - 2][y] = 'd';
+                queue.add(x - 2);
+                queue.add(y);
+            }
+            if (maze[x + 1][y] == 1){
+                maze[x + 1][y] = 'u';
+                maze[x + 2][y] = 'u';
+                queue.add(x + 2);
+                queue.add(y);
+            }
+            if (maze[x][y - 1] == 1){
+                maze[x][y - 1] = 'r';
+                maze[x][y - 2] = 'r';
+                queue.add(x);
+                queue.add(y - 2);
+            }
+            if (maze[x][y + 1] == 1){
+                maze[x][y + 1] = 'l';
+                maze[x][y + 2] = 'l';
+                queue.add(x);
+                queue.add(y + 2);
+            }
+        }
+    }
+    
+    private void findTheExit(){
+        int finishX = size - 3, finishY = size - 3;
+        
+        while ((finishX != 2) || (finishY != 2)){
+            int direction = maze[finishX][finishY];
+            maze[finishX][finishY] = 2;
+
+            switch (direction){
+                case 100:   finishX++;
+                            break;
+                case 108:   finishY--;
+                            break;
+                case 114:   finishY++;
+                            break;
+                case 117:   finishX--;
+                            break;
+            }
+        }
+        
+        // clear the unused paths
+        maze[2][2] = 2;
+        for (int i = 1; i < size - 1; i++){
+            for (int j = 1; j < size - 1; j++){
+                if (maze[i][j] == 100 || maze[i][j] == 108 ||
+                        maze[i][j] == 114 || maze[i][j] == 117){
+                    maze[i][j] = 1;
+                }
+            }
+        }
     }
 }
