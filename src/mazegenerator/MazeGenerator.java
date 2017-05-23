@@ -13,11 +13,12 @@ public final class MazeGenerator {
     private final boolean[][] visited;
     
     public MazeGenerator(){
-        size = 91;
+        size = 61;
         maze = new int[size][size];
         visited = new boolean[size][size];        
         initializeMaze();
-        generateMaze();
+//        generateRecursive();
+        generatePrims();
         markWayToStartPoint();
         findTheExit();
     }
@@ -41,7 +42,7 @@ public final class MazeGenerator {
         }
     }
     
-    private void generateMaze(){
+    private void generateRecursive(){
         int currentCellX = 2, currentCellY = 2;
         visited[currentCellX][currentCellY] = true;
         Stack<Integer> stack = new Stack<>();
@@ -180,6 +181,75 @@ public final class MazeGenerator {
             for (int j = 1; j < size - 1; j++){
                 if (maze[i][j] == 100 || maze[i][j] == 108 ||
                         maze[i][j] == 114 || maze[i][j] == 117){
+                    maze[i][j] = 1;
+                }
+            }
+        }
+    }
+    
+    private void generatePrims(){
+        int newX = 2, newY = 2;
+        visited[newX][newY] = true;
+        List<Integer> frontiers = new ArrayList<>();
+        
+        do {
+            if (maze[newX - 2][newY] == 1){
+                frontiers.add(newX - 2);
+                frontiers.add(newY);
+                maze[newX - 2][newY] = 2;
+            }
+            if (maze[newX + 2][newY] == 1){
+                frontiers.add(newX + 2);
+                frontiers.add(newY);
+                maze[newX + 2][newY] = 2;
+            }
+            if (maze[newX][newY - 2] == 1){
+                frontiers.add(newX);
+                frontiers.add(newY - 2);
+                maze[newX][newY - 2] = 2;
+            }
+            if (maze[newX][newY + 2] == 1){
+                frontiers.add(newX);
+                frontiers.add(newY + 2);
+                maze[newX][newY + 2] = 2;
+            }
+
+            int index = new Random().nextInt(frontiers.size() / 2);
+            index *= 2;
+            newX = frontiers.remove(index);
+            newY = frontiers.remove(index);
+            visited[newX][newY] = true;
+            
+            List<Integer> availableMazeCells = new ArrayList<>();
+            if (visited[newX - 2][newY] && maze[newX - 2][newY] != 0){
+                availableMazeCells.add(newX - 2);
+                availableMazeCells.add(newY);
+            }
+            if (visited[newX + 2][newY] && maze[newX + 2][newY] != 0){
+                availableMazeCells.add(newX + 2);
+                availableMazeCells.add(newY);
+            }
+            if (visited[newX][newY - 2] && maze[newX][newY - 2] != 0){
+                availableMazeCells.add(newX);
+                availableMazeCells.add(newY - 2);
+            }
+            if (visited[newX][newY + 2] && maze[newX][newY + 2] != 0){
+                availableMazeCells.add(newX);
+                availableMazeCells.add(newY + 2);
+            }
+            
+            int index2 = new Random().nextInt(availableMazeCells.size() / 2);
+            index2 *= 2;
+            int chosenX = availableMazeCells.remove(index2);
+            int chosenY = availableMazeCells.remove(index2);
+            maze[(newX + chosenX)/2][(newY + chosenY)/2] = 1;
+            
+            
+        } while (!frontiers.isEmpty());
+        
+        for (int i = 1; i < size - 1; i++){
+            for (int j = 1; j < size - 1; j++){
+                if (maze[i][j] == 2){
                     maze[i][j] = 1;
                 }
             }
