@@ -13,12 +13,13 @@ public final class MazeGenerator {
     private final boolean[][] visited;
     
     public MazeGenerator(){
-        size = 61;
+        size = 71;
         maze = new int[size][size];
         visited = new boolean[size][size];        
         initializeMaze();
 //        generateRecursive();
-        generatePrims();
+//        generatePrims();
+        generateHuntAndKill();
         markWayToStartPoint();
         findTheExit();
     }
@@ -254,5 +255,90 @@ public final class MazeGenerator {
                 }
             }
         }
+    }
+    
+    private void generateHuntAndKill(){
+        int x = 2, y = 2;
+        visited[x][y] = true;
+        
+        boolean notAllVisited;
+        do {
+            notAllVisited = false;
+            List<Integer> availableCells = new ArrayList<>();
+            if (!visited[x - 2][y]){
+                availableCells.add(x - 2);
+                availableCells.add(y);
+            }
+            if (!visited[x + 2][y]){
+                availableCells.add(x + 2);
+                availableCells.add(y);
+            }
+            if (!visited[x][y - 2]){
+                availableCells.add(x);
+                availableCells.add(y - 2);
+            }
+            if (!visited[x][y + 2]){
+                availableCells.add(x);
+                availableCells.add(y + 2);
+            }
+            
+            if (!availableCells.isEmpty()){
+                int index = new Random().nextInt(availableCells.size() / 2);
+                index *= 2;
+                int tempX = availableCells.remove(index);
+                int tempY = availableCells.remove(index);
+                maze[(x + tempX)/2][(y + tempY)/2] = 1;
+                x = tempX;
+                y = tempY;
+                visited[x][y] = true;
+            }
+            else {
+                outer:
+                for (int i = 2; i <= size - 3; i += 2){
+                    for (int j = 2; j <= size - 3; j += 2){
+                        if (!visited[i][j]){
+                            List<Integer> visitedNeighbours = new ArrayList<>();
+                            if (visited[i - 2][j] && maze[i - 2][j] == 1){
+                                visitedNeighbours.add(i - 2);
+                                visitedNeighbours.add(j);
+                            }
+                            if (visited[i + 2][j] && maze[i + 2][j] == 1){
+                                visitedNeighbours.add(i + 2);
+                                visitedNeighbours.add(j);
+                            }
+                            if (visited[i][j - 2] && maze[i][j - 2] == 1){
+                                visitedNeighbours.add(i);
+                                visitedNeighbours.add(j - 2);
+                            }
+                            if (visited[i][j + 2] && maze[i][j + 2] == 1){
+                                visitedNeighbours.add(i);
+                                visitedNeighbours.add(j + 2);
+                            }
+                            
+                            if (!visitedNeighbours.isEmpty()){
+                                int index = new Random().nextInt(visitedNeighbours.size() / 2);
+                                index *= 2;
+                                int tempX = visitedNeighbours.remove(index);
+                                int tempY = visitedNeighbours.remove(index);
+                                maze[(i + tempX)/2][(j + tempY)/2] = 1;
+                                x = i;
+                                y = j;
+                                visited[x][y] = true;
+                                break outer;
+                            }
+                        }
+                    }
+                } 
+            }
+            check:
+            for (int i = 2; i <= size - 3; i += 2){
+                for (int j = 2; j <= size - 3; j += 2){
+                    if (!visited[i][j]){
+                        notAllVisited = true;
+                        break check;
+                    }
+                }
+            }
+        } while (notAllVisited);
     }
 }
